@@ -1,0 +1,13 @@
+  This is a simple gem that will allow for easy to use authentication system
+for rails 3 applications using Datamapper. 
+
+  Simple builds the necessary tables and controllers to handle all of your 
+authentication needs including email verification, user login and logout, 
+and password reset. 
+
+  Installing and using this authentication system only requires 3 simple steps
+  
+  1) Add the following line to your gemfile:
+        gem "easy-auth"
+  2) $ bundle install
+  3) $ rails generate easy-auth:install
