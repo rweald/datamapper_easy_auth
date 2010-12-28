@@ -38,6 +38,14 @@ describe User do
         @new_user.save
         @new_user.hashed_password.should_not be_nil
       end
+      
+      it "should only hash a password once" do
+        @new_user.save 
+        hash_value = @new_user.hashed_password
+        @new_user.password = 'blah'
+        @new_user.save
+        @new_user.hashed_password.should == hash_value
+      end
     end
     
     context "users password has changed" do
