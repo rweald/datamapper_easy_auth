@@ -21,7 +21,7 @@ class User
 
   # hooks to add values and perform necessary operations before insert to db
   before :valid?, :create_verification_token
-  before :create, :secure_password
+  # before :create, :secure_password
 
   # Method that will create a verification token that
   # can be emailed out to ensure a valid email address
@@ -40,9 +40,11 @@ class User
   # before storing it in the db.
   # should be completed if the password has not changed
   def secure_password
-    validate_password!
-    self.salt = ActiveSupport::SecureRandom.base64(8)
-    self.hashed_password = generate_hash("#{self.password}" + "#{self.salt}")
+    if password_changed?
+      validate_password!
+      self.salt = ActiveSupport::SecureRandom.base64(8)
+      self.hashed_password = generate_hash("#{self.password}" + "#{self.salt}")
+    end
   end
 
   # custom validation method to ensure that password
@@ -79,4 +81,16 @@ class User
     end
     return false
   end
+
+  # override the save method so we can do the necessary hashing of the
+  # when it has changed
+  def save
+    begin
+      secure_password
+      super
+    rescue
+      return false
+    end
+  end
+  
 end

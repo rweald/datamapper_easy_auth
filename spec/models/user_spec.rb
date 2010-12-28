@@ -50,7 +50,13 @@ describe User do
     
     context "users password has changed" do
       it "should re-hash the password" do
-        pending
+        @new_user.save
+        hash_value = @new_user.hashed_password
+        
+        @new_user.stubs(:password_changed?).returns(true)
+        @new_user.password = "blah"
+        @new_user.save
+        @new_user.hashed_password.should_not == hash_value
       end
     end
   end
