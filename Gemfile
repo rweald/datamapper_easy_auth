@@ -40,6 +40,7 @@ gem 'jquery-rails'
 gem 'haml'
 gem "formtastic"
 
+
 group(:development, :test) do
   gem 'rspec-rails'
   gem 'cucumber-rails'
@@ -47,5 +48,6 @@ group(:development, :test) do
   gem 'shoulda'
   gem 'bourne'
   gem 'timecop'
+  gem 'ruby-debug'
 end
 
