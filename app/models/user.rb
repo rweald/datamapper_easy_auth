@@ -98,8 +98,26 @@ class User
     end
   end
 
-  def self.change_password!(token=nil, new_password=nil)
-    
+  # Method that performs the change of password if the supplied 
+  # token is correct for the user who's email address is supplied. 
+  # This is a desructive method and will change the users password forever
+  # Requires an email address, token, and new password
+  # will return the logic result of the operation
+  def self.change_password!(args)
+    # get the user from the email address
+    current_user = User.first(:email => args[:email])
+    if current_user
+      # check to ensure that the tokens match
+      if args[:token] == current_user.password_change_token
+        current_user.password = args[:new_password]
+        current_user.secure_password
+        return current_user.update
+      else
+        return "blah"
+      end
+    else
+      return "foo"
+    end
   end
   
 end
