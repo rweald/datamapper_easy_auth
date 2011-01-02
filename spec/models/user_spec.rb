@@ -78,4 +78,19 @@ describe User do
       end
     end
   end
+  
+  describe "change_password!" do
+    before(:each) do
+      @myUser = User.create :email => "test@test.com", :password => "test"
+      User.generate_password_change_token("test@test.com")
+      @myToken = @myUser.password_change_token
+    end
+    context "the tokens match" do
+      it "should change the users password in the db" do
+        old_value = @myUser.hashed_password
+        User.change_password!(@token, "foobar")
+        @myUser.hashed_password.should_not == old_value
+      end
+    end
+  end
 end

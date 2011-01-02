@@ -81,13 +81,25 @@ class User
     return false
   end
   
+  # class method that will generate a password change token
+  # for the current user and return it. The token will also
+  #  be stored in the db so you can verify the token at a later time
+  # Requires the email address of the user who wants to change password
+  # if the email address if not valid then nil will be returned.
   def self.generate_password_change_token(email=nil)
     current_user = User.first(:email => email)
     if current_user
-      return Digest::SHA1.hexdigest(current_user.hashed_password + DateTime.now().to_i().to_s + current_user.id.to_s)
+      token = Digest::SHA1.hexdigest(current_user.hashed_password + DateTime.now().to_i().to_s + current_user.id.to_s)
+      current_user.password_change_token = token
+      current_user.save
+      return token
     else
       return nil
     end
+  end
+
+  def self.change_password!(token=nil, new_password=nil)
+    
   end
   
 end
