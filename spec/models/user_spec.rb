@@ -54,4 +54,28 @@ describe User do
       end
     end
   end
+  
+  describe "#generate_password_change_token" do
+    before(:each) do
+      @myUser = User.create(:email => "test@test.com", :password => "test")
+    end
+    
+    context "email address is in the db" do
+      # it "simple test" do
+      #   myUser = User.first(:email => "test@test.com")
+      #   myUser.email.should == "test@test.com"
+      # end
+      it "should return a hashed token string" do
+        return_value = User.generate_password_change_token("test@test.com") 
+        return_value.should_not be_nil
+      end
+    end
+    
+    context "the email address is not in the db" do
+      it "should return nil" do
+        returned_value = User.generate_password_change_token :email => "not@indb.com"  
+        returned_value.should be_nil
+      end
+    end
+  end
 end

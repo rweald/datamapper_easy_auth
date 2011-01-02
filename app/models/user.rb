@@ -68,6 +68,7 @@ class User
     end
   end
 
+
   def password_reset_valid?
     if self.password_change_token
       # check to see if the token has not expired
@@ -79,4 +80,14 @@ class User
     end
     return false
   end
+  
+  def self.generate_password_change_token(email=nil)
+    current_user = User.first(:email => email)
+    if current_user
+      return Digest::SHA1.hexdigest(current_user.hashed_password + DateTime.now().to_i().to_s + current_user.id.to_s)
+    else
+      return nil
+    end
+  end
+  
 end
