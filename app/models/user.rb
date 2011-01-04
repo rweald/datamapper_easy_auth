@@ -106,7 +106,7 @@ class User
   # will return the logic result of the operation
   def self.change_password!(args)
     # get the user from the email address
-    current_user = User.first(:email => args[:email])
+    current_user = User.get(args[:user_id])
     if current_user
       # check to ensure that the tokens match
       if current_user.password_change_token_valid?(:token => args[:token])

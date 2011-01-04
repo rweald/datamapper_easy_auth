@@ -84,14 +84,14 @@ describe User do
     context "the tokens match" do
       it "should change the users password in the db" do
         old_value = @myUser.hashed_password
-        User.change_password!(:token => @myUser.password_change_token, :email=> @myUser.email, :new_password => "foobar").should be_true
+        User.change_password!(:token => @myUser.password_change_token, :user_id=> @myUser.id, :new_password => "foobar").should be_true
         User.first(:email => @myUser.email).hashed_password.should_not == old_value
       end
     end
     
     context "the tokens do not match" do
       it "should return false" do
-        User.change_password!(:token => "bad token value", :email => @myUser.email, :new_password => "foobar").should_not be_true
+        User.change_password!(:token => "bad token value", :user_id => @myUser.id, :new_password => "foobar").should_not be_true
       end
     end
   end
