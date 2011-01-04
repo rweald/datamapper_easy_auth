@@ -1,0 +1,8 @@
+.form_container
+  - form_tag(:action => "update", :method => "post", :controller => "password") do
+    = password_field_tag "new_password"
+    = password_field_tag "new_password_confirmation"
+    = submit_tag "Update Password", :id => "submit", :name => "submit"
+
+    
+  

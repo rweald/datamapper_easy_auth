@@ -68,14 +68,14 @@ class User
     end
   end
 
-
-  def password_reset_valid?
+  # method that can be used to determine if a password reset token is valid
+  # based on the token value stored in the db and also checks to ensure
+  # that the token has not expired.
+  def password_change_token_valid?(args)
+    # basic sanity check to ensure user has a reset token
     if self.password_change_token
-      # check to see if the token has not expired
-      if self.token_expiration > DateTime.now
+      if (self.password_change_token == args[:token]) && self.token_expiration > DateTime.now
         return true
-      else
-        return false
       end
     end
     return false
@@ -109,7 +109,7 @@ class User
     current_user = User.first(:email => args[:email])
     if current_user
       # check to ensure that the tokens match
-      if args[:token] == current_user.password_change_token && current_user.password_reset_valid?
+      if current_user.password_change_token_valid?(:token => args[:token])
         current_user.password = args[:new_password]
         current_user.secure_password
         return current_user.save
