@@ -48,11 +48,6 @@ describe User do
       end
     end
     
-    context "users password has changed" do
-      it "should re-hash the password" do
-        pending
-      end
-    end
   end
   
   describe "#generate_password_change_token" do
@@ -83,13 +78,20 @@ describe User do
     before(:each) do
       @myUser = User.create :email => "test@test.com", :password => "test"
       User.generate_password_change_token("test@test.com")
+      @myUser = User.first(:email => "test@test.com")
     end
     
     context "the tokens match" do
       it "should change the users password in the db" do
         old_value = @myUser.hashed_password
-        User.change_password!(:token => @myUser.password_change_token, :email => @myUser.email, :new_password => "foobar").should be_true
+        User.change_password!(:token => @myUser.password_change_token, :email=> @myUser.email, :new_password => "foobar").should be_true
         User.first(:email => @myUser.email).hashed_password.should_not == old_value
+      end
+    end
+    
+    context "the tokens do not match" do
+      it "should return false" do
+        User.change_password!(:token => "bad token value", :email => @myUser.email, :new_password => "foobar").should_not be_true
       end
     end
   end

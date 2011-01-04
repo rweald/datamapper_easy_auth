@@ -72,7 +72,7 @@ class User
   def password_reset_valid?
     if self.password_change_token
       # check to see if the token has not expired
-      if self.token_expiration < DateTime.now
+      if self.token_expiration > DateTime.now
         return true
       else
         return false
@@ -91,6 +91,7 @@ class User
     if current_user
       token = Digest::SHA1.hexdigest(current_user.hashed_password + DateTime.now().to_i().to_s + current_user.id.to_s)
       current_user.password_change_token = token
+      current_user.token_expiration = DateTime.now() + 1
       current_user.save
       return token
     else
@@ -108,15 +109,15 @@ class User
     current_user = User.first(:email => args[:email])
     if current_user
       # check to ensure that the tokens match
-      if args[:token] == current_user.password_change_token
+      if args[:token] == current_user.password_change_token && current_user.password_reset_valid?
         current_user.password = args[:new_password]
         current_user.secure_password
-        return current_user.update
+        return current_user.save
       else
-        return "blah"
+        return false
       end
     else
-      return "foo"
+      return false
     end
   end
   
