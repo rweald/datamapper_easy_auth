@@ -37,4 +37,32 @@ describe PasswordController do
       end
     end
   end
+  
+  
+  describe "POST create" do
+    context "the two password fields do not match" do
+      it "should set the flash" do
+        post :create, :new_password => "test", :new_password_confirmation  => " testrz"
+
+        flash[:error].should == "The passwords did not match. Please try again."
+      end
+      
+      it "should redirect back to the new view" do
+        post :create, :new_password => "test", :new_password_confirmation  => " testrz"
+        response.should redirect_to(:action => "new")    
+      end
+    end
+    
+    context "the two password fields match" do
+      before do
+        @myUser = Factory.build(:user)
+        @myUser.save
+      end
+      it "should update the password in the db" do
+        old_password = @myUser.hashed_password
+        post :create, :new_password => "foo", :new_password_confirmation => "foo", :token => @myUser.password_change_token, :user_id => @myUser.id  
+        User.get(1).hashed_password.should_not == old_password
+      end
+    end
+  end
 end

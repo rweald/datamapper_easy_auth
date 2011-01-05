@@ -44,6 +44,7 @@ gem "formtastic"
 group(:development, :test) do
   gem 'rspec-rails'
   gem 'cucumber-rails'
+  gem "factory_girl"
   gem 'factory_girl_rails'
   gem 'shoulda'
   gem 'bourne'
