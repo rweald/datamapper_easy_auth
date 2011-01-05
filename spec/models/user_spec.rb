@@ -3,57 +3,61 @@ require "ruby-debug"
 
 describe User do
   before(:each) do
-    @new_user = User.new :email => "test@test.com", :password => "test"
+    @myUser = Factory(:user)
+    @myUser.save
   end
 
   context "attribute validation" do
+    # override the usual before method because we dont want a pre-saved
+    # copy because this is validation
+    before do
+      @myUser = User.new :email => "test@test.com", :password => "test"
+    end
+    
     it "should validate presence of email" do
-      @new_user.email = "test@test.com"
-      @new_user.save.should_not == false
+      @myUser.email = "test@test.com"
+      @myUser.save.should_not == false
 
-      @new_user.email = nil
-      @new_user.save.should_not == true
+      @myUser.email = nil
+      @myUser.save.should_not == true
 
     end
 
     it "should generate salt upon save" do
-      @new_user.save
-      @new_user.salt.should_not be_nil
+      @myUser.save
+      @myUser.salt.should_not be_nil
     end
 
     it "should hash the password upon save" do
-      @new_user.save
-      @new_user.hashed_password.should_not be_nil
+      @myUser.save
+      @myUser.hashed_password.should_not be_nil
     end
 
     it "should validate presence of password" do
-      @new_user.password = nil
-      @new_user.save.should == false
+      @myUser.password = nil
+      @myUser.save.should == false
     end
   end
 
   describe "#secure_password" do
     context "user does not have a password stored yet" do
       it "should hash the password" do
-        @new_user.save
-        @new_user.hashed_password.should_not be_nil
+        @myUser.save
+        @myUser.hashed_password.should_not be_nil
       end
       
       it "should only hash a password once" do
-        @new_user.save 
-        hash_value = @new_user.hashed_password
-        @new_user.password = 'blah'
-        @new_user.save
-        @new_user.hashed_password.should == hash_value
+        @myUser.save 
+        hash_value = @myUser.hashed_password
+        @myUser.password = 'blah'
+        @myUser.save
+        @myUser.hashed_password.should == hash_value
       end
     end
     
   end
   
   describe "#generate_password_change_token" do
-    before(:each) do
-      @myUser = User.create(:email => "test@test.com", :password => "test")
-    end
     
     context "email address is in the db" do
       # it "simple test" do
@@ -75,11 +79,6 @@ describe User do
   end
   
   describe "change_password!" do
-    before(:each) do
-      @myUser = User.create :email => "test@test.com", :password => "test"
-      User.generate_password_change_token("test@test.com")
-      @myUser = User.first(:email => "test@test.com")
-    end
     
     context "the tokens match" do
       it "should change the users password in the db" do
