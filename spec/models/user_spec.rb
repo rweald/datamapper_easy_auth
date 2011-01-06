@@ -101,5 +101,11 @@ describe User do
         User.authenticate(:email => "test@test.com",:password => "test").should_not be_nil
       end
     end
+    
+    context "values are incorrect" do
+      it "should return nil" do
+        User.authenticate(:email => "test@test.com",:password => "bad password").should be_nil
+      end
+    end
   end
 end
