@@ -1,0 +1,16 @@
+.login_form_container  
+  = form_tag(:controller => "session", :action => "create", :method => :post) do
+    %p Email Address
+    %p 
+      = email_field_tag "email" 
+    %p Password
+    %p 
+      = password_field_tag "password"
+    %p   
+      Keep me logged in
+      = check_box_tag "keep_loggedin"
+    %p 
+      = submit_tag "Login", :id => "submit", :name => "submit"
+    
+  
+

@@ -94,4 +94,12 @@ describe User do
       end
     end
   end
+  
+  describe "#self.authenticate" do
+    context "values are correct" do
+      it "should return user object" do
+        User.authenticate(:email => "test@test.com",:password => "test").should_not be_nil
+      end
+    end
+  end
 end

@@ -17,7 +17,9 @@ class User
   # properties for password reset
   property :password_change_token , String
   property :token_expiration, DateTime
-
+  
+  # sets up the association to session object.
+  has n, :sessions
 
   # hooks to add values and perform necessary operations before insert to db
   before :valid?, :create_verification_token
@@ -120,5 +122,18 @@ class User
       return false
     end
   end
-  
+
+  # class method that can perform authentication based on email and password
+  # will return the user object if the authentication is successful and nil
+  # if the auth is not successful.
+  def self.authenticate(args)
+    attempted_user = User.first(:email => args[:email])
+    if attempted_user
+      attempted_password_hash = attempted_user.generate_hash("#{args[:password]}" + "#{attempted_user.salt}")
+      if attempted_password_hash == attempted_user.hashed_password
+        return attempted_user
+      end
+    end
+    return nil
+  end
 end
